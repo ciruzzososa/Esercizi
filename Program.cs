@@ -7,10 +7,50 @@ List<string> contacts = (await File.ReadAllLinesAsync("rubrica.json"))
 
 List<string> contactsLoaded = contacts.Select(contact =>
 {
-    ContactModel contactModel = JsonSerializer.Deserialize<ContactModel>(contact);
+    ContactModel contactModel = JsonSerializer.Deserialize<ContactModel>(contact) ??
+        throw new FormatException("Valore Invalido!");
 
     return $"{contactModel.Nome} {contactModel.Cognome}: {contactModel.Numero}";
 }).ToList();
+
+#endregion
+
+#region Methods
+
+void SearchContact(string toSearch)
+{
+    contactsLoaded.ForEach(contact =>
+    {
+        if (contact.Contains(toSearch))
+            Console.WriteLine(contact);
+    });
+}
+
+async Task AddContact()
+{
+    Console.Write("Nome: ");
+    string name = Console.ReadLine();
+        
+    Console.Write("Cognome: ");
+    string surname = Console.ReadLine();
+        
+    Console.Write("Numero: ");
+    string number = Console.ReadLine();
+
+    
+    var ctc = new ContactModel
+    {
+        Nome = name,
+        Cognome = surname,
+        Numero = number
+    };
+
+    string newContact = JsonSerializer.Serialize(ctc);
+
+    await File.AppendAllTextAsync("rubrica.json", $"\n{newContact}");
+        
+    Console.WriteLine("Contatto aggiunto!");
+}
 
 #endregion
 
@@ -30,49 +70,44 @@ void PrintAllContacts() =>
 
 #endregion
 
-#region Esercizio 3
+#region Esercizio 3/4/5
 
-if (args.Length > 0)
-{
-    if (args[0] == "lista")
-        PrintAllContacts();
-    else if (args[0] == "cerca")
-    {
-        // TODO: Check se args[1] non esiste
-        
-        contactsLoaded.ForEach(contact =>
-        {
-            if (contact.Contains(args[1]))
-                Console.WriteLine(contact);
-        });
-    }
-}
-
-#endregion
-
-#region Esercizio 4
+string cmd, toSearch = "";
 
 if (args.Length == 0)
 {
-    Console.Write("Non sono stati specificati argomenti, scegli il comando: lista, cerca\nComando -> ");
+    Console.Write("Non sono stati specificati argomenti, scegli il comando: lista, cerca, nuovo\nComando -> ");
 
-    string cmd = Console.ReadLine();
+    cmd = Console.ReadLine();
     
-    if (cmd == "lista")
-        PrintAllContacts();
-    else if (cmd == "cerca")
+    
+    if (cmd == "cerca")
     {
         Console.Write("Cerca -> ");
 
-        string toSearch = Console.ReadLine();
-        
-        contactsLoaded.ForEach(contact =>
-        {
-            if (contact.Contains(toSearch))
-                Console.WriteLine(contact);
-        });
+        toSearch = Console.ReadLine();
     }
 }
+else
+{
+    cmd = args[0];
+    
+    if (args.Length > 1)
+        toSearch = args[1];
+    else
+    {
+        if (cmd == "cerca")
+            throw new Exception("Argomento non specificato!");
+    }
+}
+
+
+if (cmd == "lista")
+    PrintAllContacts();
+else if (cmd == "cerca")
+    SearchContact(toSearch);
+else if (cmd == "nuovo")
+    await AddContact();
 
 #endregion
 
