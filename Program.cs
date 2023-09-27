@@ -2,60 +2,49 @@
 
 #region Vars
 
-List<string> contacts = (await File.ReadAllLinesAsync("rubrica.json"))
-    .ToList();
+IAsyncEnumerable<string> contacts = File.ReadLinesAsync("rubrica.json");
 
-List<string> contactsLoaded = contacts.Select(contact =>
+string FormatContact(string json)
 {
-    ContactModel contactModel = JsonSerializer.Deserialize<ContactModel>(contact) ??
+    ContactModel contactModel = JsonSerializer.Deserialize<ContactModel>(json) ??
         throw new FormatException("Valore Invalido!");
 
     return $"{contactModel.Nome} {contactModel.Cognome}: {contactModel.Numero}";
-}).ToList();
+}
+
+IAsyncEnumerable<string> contactsLoaded = contacts.Select(FormatContact);
 
 #endregion
 
 #region Methods
 
-void SearchContact(string toSearch)
+async Task SearchContactAsync(string toSearch)
 {
-    contactsLoaded.ForEach(contact =>
-    {
-        if (contact.Contains(toSearch))
-            Console.WriteLine(contact);
-    });
+    await contactsLoaded
+        .Where(c => c.Contains(toSearch))
+        .ForEachAsync(c => Console.WriteLine(c));
 }
 
-async Task AddContact(List<string> args)
+//async Task AddContact(List<string> args)
+async Task AddContactAsync(string? name, string? surname, string? number)
 {
-    string name, surname, number;
-    
-    args.RemoveAt(0);
-
-    if (args.Count < 1)
+    if (name == null)
     {
         Console.Write("Nome: ");
         name = Console.ReadLine() ?? "Undefined";
     }
-    else
-        name = args[0];
     
-    if (args.Count < 2)
+    if (surname == null)
     {
         Console.Write("Cognome: ");
         surname = Console.ReadLine() ?? "Undefined";
     }
-    else
-        surname = args[1];
     
-    if (args.Count < 3)
+    if (number == null)
     {
         Console.Write("Numero: ");
         number = Console.ReadLine() ?? "Undefined";
     }
-    else
-        number = args[2];
-
     
     var ctc = new ContactModel
     {
@@ -71,34 +60,32 @@ async Task AddContact(List<string> args)
     Console.WriteLine("Contatto aggiunto!");
 }
 
-async Task RemoveContact(string data)
+async Task RemoveContactAsync(string data)
 {
-    List<string> currentContacts = new();
-    
-    contactsLoaded.ForEach(contact =>
-    {
-        if (contact.Contains(data))
-            currentContacts.Add(contact);
-    });
+    IAsyncEnumerable<(string Contact, int Index)> currentContacs = contactsLoaded
+        .Select((c, i) => (c, i))
+        .Where(x => x.c.Contains(data));
 
-    if (currentContacts.Count == 0)
+    if (await currentContacs.AnyAsync())
         Console.WriteLine($"{data} non trovato.");
-    else if (currentContacts.Count == 1)
+    else if (await currentContacs.CountAsync() == 1)
     {
-        string contact = currentContacts.First();
+        (string contact, int toRemoveIndex) = await currentContacs.FirstAsync();
 
+        using FileStream file = File.OpenWrite("rubrica.json");
+        using StreamWriter writer = new StreamWriter(file);
+        await foreach ((string json, int index) in contacts.Select((c, i) => (c, i)))
+        {
+            if (index == toRemoveIndex)
+                continue;
 
-        int index = contactsLoaded.IndexOf(contact);
-        
-        contacts.RemoveAt(index);
-
-        await File.WriteAllLinesAsync("rubrica.json", contacts);
-        
+            await writer.WriteLineAsync(json);
+        }
         
         Console.WriteLine($"Cancellato {contact}");
     }
     else
-        Console.WriteLine($"Nome Ambiguo:\n{string.Join("\n", contacts)}");
+        Console.WriteLine($"Nome Ambiguo:\n{string.Join("\n", currentContacs.Select(x => x.Contact))}");
 }
 
 #endregion
@@ -121,7 +108,7 @@ void PrintAllContacts() =>
 
 #region Esercizio 3/4/5/7
 
-string cmd, toSearch = "", toRemove = "";
+string cmd, target = "";
 
 if (args.Length == 0)
 {
@@ -134,30 +121,22 @@ if (args.Length == 0)
     {
         Console.Write("Cerca -> ");
 
-        toSearch = Console.ReadLine()!;
+        target = Console.ReadLine()!;
     }
     else if (cmd == "cancella")
     {
         Console.Write("Chi vuoi cancellare? -> ");
 
-        toRemove = Console.ReadLine()!;
+        target = Console.ReadLine()!;
     }
 }
 else
 {
     cmd = args[0];
 
-    if (args.Length > 1)
+    if (args[0] is "cerca" or "cancella")
     {
-        if (args[0] == "cerca")
-            toSearch = args[1];
-        else if (args[0] == "cancella")
-            toRemove = args[1];
-    }
-    else
-    {
-        if (cmd == "cerca" || cmd == "cancella")
-            throw new Exception("Argomento non specificato!");
+        target = args.ElementAtOrDefault(1) ?? throw new Exception("Argomento non specificato!");
     }
 }
 
@@ -165,11 +144,11 @@ else
 if (cmd == "lista")
     PrintAllContacts();
 else if (cmd == "cerca")
-    SearchContact(toSearch);
+    await SearchContactAsync(target);
 else if (cmd == "nuovo")
-    await AddContact(args.ToList());
+    await AddContactAsync(args.ElementAtOrDefault(1), args.ElementAtOrDefault(2), args.ElementAtOrDefault(3));
 else if (cmd == "cancella")
-    await RemoveContact(toRemove);
+    await RemoveContactAsync(target);
 
 #endregion
 
