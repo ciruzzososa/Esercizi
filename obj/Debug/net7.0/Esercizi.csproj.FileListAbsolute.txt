@@ -1,0 +1,16 @@
+C:\Users\cirin\Desktop\Projects\Esercizi\bin\Debug\net7.0\rubrica.json
+C:\Users\cirin\Desktop\Projects\Esercizi\bin\Debug\net7.0\Esercizi.exe
+C:\Users\cirin\Desktop\Projects\Esercizi\bin\Debug\net7.0\Esercizi.deps.json
+C:\Users\cirin\Desktop\Projects\Esercizi\bin\Debug\net7.0\Esercizi.runtimeconfig.json
+C:\Users\cirin\Desktop\Projects\Esercizi\bin\Debug\net7.0\Esercizi.dll
+C:\Users\cirin\Desktop\Projects\Esercizi\bin\Debug\net7.0\Esercizi.pdb
+C:\Users\cirin\Desktop\Projects\Esercizi\obj\Debug\net7.0\Esercizi.csproj.AssemblyReference.cache
+C:\Users\cirin\Desktop\Projects\Esercizi\obj\Debug\net7.0\Esercizi.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\cirin\Desktop\Projects\Esercizi\obj\Debug\net7.0\Esercizi.AssemblyInfoInputs.cache
+C:\Users\cirin\Desktop\Projects\Esercizi\obj\Debug\net7.0\Esercizi.AssemblyInfo.cs
+C:\Users\cirin\Desktop\Projects\Esercizi\obj\Debug\net7.0\Esercizi.csproj.CoreCompileInputs.cache
+C:\Users\cirin\Desktop\Projects\Esercizi\obj\Debug\net7.0\Esercizi.dll
+C:\Users\cirin\Desktop\Projects\Esercizi\obj\Debug\net7.0\refint\Esercizi.dll
+C:\Users\cirin\Desktop\Projects\Esercizi\obj\Debug\net7.0\Esercizi.pdb
+C:\Users\cirin\Desktop\Projects\Esercizi\obj\Debug\net7.0\Esercizi.genruntimeconfig.cache
+C:\Users\cirin\Desktop\Projects\Esercizi\obj\Debug\net7.0\ref\Esercizi.dll

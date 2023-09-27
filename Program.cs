@@ -5,32 +5,48 @@
 List<string> contacts = (await File.ReadAllLinesAsync("rubrica.json"))
     .ToList();
 
-#endregion
-
-#region Methods
-
-void PrintContact(string contact)
+List<string> contactsLoaded = contacts.Select(contact =>
 {
     ContactModel contactModel = JsonSerializer.Deserialize<ContactModel>(contact);
-    
-    Console.WriteLine($"{contactModel.Nome} {contactModel.Cognome}: {contactModel.Numero}");
-}
+
+    return $"{contactModel.Nome} {contactModel.Cognome}: {contactModel.Numero}";
+}).ToList();
 
 #endregion
 
 #region Esercizio 1
 
-string firstContact = contacts.First();
+string firstContact = contactsLoaded.First();
 
-// PrintContact(firstContact);
+// Console.WriteLine(firstContact);
 
 #endregion
 
 #region Esercizio 2
 
 void PrintAllContacts() =>
-    contacts.ForEach(contact =>
-        PrintContact(contact));
+    contactsLoaded.ForEach(contact =>
+        Console.WriteLine(contact));
+
+#endregion
+
+#region Esercizio 3
+
+if (args.Length > 0)
+{
+    if (args[0] == "lista")
+        PrintAllContacts();
+    else if (args[0] == "cerca")
+    {
+        // TODO: Check se args[1] non esiste
+        
+        contactsLoaded.ForEach(contact =>
+        {
+            if (contact.Contains(args[1]))
+                Console.WriteLine(contact);
+        });
+    }
+}
 
 #endregion
 
