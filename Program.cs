@@ -26,16 +26,35 @@ void SearchContact(string toSearch)
     });
 }
 
-async Task AddContact()
+async Task AddContact(List<string> args)
 {
-    Console.Write("Nome: ");
-    string name = Console.ReadLine();
-        
-    Console.Write("Cognome: ");
-    string surname = Console.ReadLine();
-        
-    Console.Write("Numero: ");
-    string number = Console.ReadLine();
+    string name, surname, number;
+    
+    args.RemoveAt(0);
+
+    if (args.Count < 1)
+    {
+        Console.Write("Nome: ");
+        name = Console.ReadLine();
+    }
+    else
+        name = args[0];
+    
+    if (args.Count < 2)
+    {
+        Console.Write("Cognome: ");
+        surname = Console.ReadLine();
+    }
+    else
+        surname = args[1];
+    
+    if (args.Count < 3)
+    {
+        Console.Write("Numero: ");
+        number = Console.ReadLine();
+    }
+    else
+        number = args[2];
 
     
     var ctc = new ContactModel
@@ -107,7 +126,7 @@ if (cmd == "lista")
 else if (cmd == "cerca")
     SearchContact(toSearch);
 else if (cmd == "nuovo")
-    await AddContact();
+    await AddContact(args.ToList());
 
 #endregion
 
