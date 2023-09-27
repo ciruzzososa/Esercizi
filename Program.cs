@@ -50,6 +50,32 @@ if (args.Length > 0)
 
 #endregion
 
+#region Esercizio 4
+
+if (args.Length == 0)
+{
+    Console.Write("Non sono stati specificati argomenti, scegli il comando: lista, cerca\nComando -> ");
+
+    string cmd = Console.ReadLine();
+    
+    if (cmd == "lista")
+        PrintAllContacts();
+    else if (cmd == "cerca")
+    {
+        Console.Write("Cerca -> ");
+
+        string toSearch = Console.ReadLine();
+        
+        contactsLoaded.ForEach(contact =>
+        {
+            if (contact.Contains(toSearch))
+                Console.WriteLine(contact);
+        });
+    }
+}
+
+#endregion
+
 #region Models
 
 class ContactModel
