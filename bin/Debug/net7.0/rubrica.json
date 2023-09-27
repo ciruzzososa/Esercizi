@@ -1,4 +1,4 @@
-﻿{ "Nome": "Mario", "Cognome": "Rossi", "Numero": "3312345678" }
+{ "Nome": "Mario", "Cognome": "Rossi", "Numero": "3312345678" }
 { "Nome": "Filippo", "Cognome": "Russo", "Numero": "3361943025" }
 { "Nome": "Gabriel", "Cognome": "Ferrari", "Numero": "3366942053" }
 { "Nome": "Stefano", "Cognome": "Esposito", "Numero": "3297309974" }
@@ -102,3 +102,5 @@
 {"Nome":"A","Cognome":"B","Numero":"C"}
 {"Nome":"A","Cognome":"g","Numero":"v"}
 {"Nome":"d","Cognome":"d","Numero":"d"}
+{"Nome":"F","Cognome":"S","Numero":"K"}
+{"Nome":"F","Cognome":"S","Numero":"K"}

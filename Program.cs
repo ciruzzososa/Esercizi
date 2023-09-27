@@ -35,7 +35,7 @@ async Task AddContact(List<string> args)
     if (args.Count < 1)
     {
         Console.Write("Nome: ");
-        name = Console.ReadLine();
+        name = Console.ReadLine() ?? "Undefined";
     }
     else
         name = args[0];
@@ -43,7 +43,7 @@ async Task AddContact(List<string> args)
     if (args.Count < 2)
     {
         Console.Write("Cognome: ");
-        surname = Console.ReadLine();
+        surname = Console.ReadLine() ?? "Undefined";
     }
     else
         surname = args[1];
@@ -51,7 +51,7 @@ async Task AddContact(List<string> args)
     if (args.Count < 3)
     {
         Console.Write("Numero: ");
-        number = Console.ReadLine();
+        number = Console.ReadLine() ?? "Undefined";
     }
     else
         number = args[2];
@@ -71,13 +71,43 @@ async Task AddContact(List<string> args)
     Console.WriteLine("Contatto aggiunto!");
 }
 
+async Task RemoveContact(string data)
+{
+    List<string> currentContacts = new();
+    
+    contactsLoaded.ForEach(contact =>
+    {
+        if (contact.Contains(data))
+            currentContacts.Add(contact);
+    });
+
+    if (currentContacts.Count == 0)
+        Console.WriteLine($"{data} non trovato.");
+    else if (currentContacts.Count == 1)
+    {
+        string contact = currentContacts.First();
+
+
+        int index = contactsLoaded.IndexOf(contact);
+        
+        contacts.RemoveAt(index);
+
+        await File.WriteAllLinesAsync("rubrica.json", contacts);
+        
+        
+        Console.WriteLine($"Cancellato {contact}");
+    }
+    else
+        Console.WriteLine($"Nome Ambiguo:\n{string.Join("\n", contacts)}");
+}
+
 #endregion
 
 #region Esercizio 1
 
-string firstContact = contactsLoaded.First();
+/* string firstContact = contactsLoaded.First();
 
-// Console.WriteLine(firstContact);
+Console.WriteLine(firstContact); */
 
 #endregion
 
@@ -89,33 +119,44 @@ void PrintAllContacts() =>
 
 #endregion
 
-#region Esercizio 3/4/5
+#region Esercizio 3/4/5/7
 
-string cmd, toSearch = "";
+string cmd, toSearch = "", toRemove = "";
 
 if (args.Length == 0)
 {
-    Console.Write("Non sono stati specificati argomenti, scegli il comando: lista, cerca, nuovo\nComando -> ");
+    Console.Write("Non sono stati specificati argomenti, scegli il comando: lista, cerca, nuovo, cancella\nComando -> ");
 
-    cmd = Console.ReadLine();
+    cmd = Console.ReadLine()!;
     
     
     if (cmd == "cerca")
     {
         Console.Write("Cerca -> ");
 
-        toSearch = Console.ReadLine();
+        toSearch = Console.ReadLine()!;
+    }
+    else if (cmd == "cancella")
+    {
+        Console.Write("Chi vuoi cancellare? -> ");
+
+        toRemove = Console.ReadLine()!;
     }
 }
 else
 {
     cmd = args[0];
-    
+
     if (args.Length > 1)
-        toSearch = args[1];
+    {
+        if (args[0] == "cerca")
+            toSearch = args[1];
+        else if (args[0] == "cancella")
+            toRemove = args[1];
+    }
     else
     {
-        if (cmd == "cerca")
+        if (cmd == "cerca" || cmd == "cancella")
             throw new Exception("Argomento non specificato!");
     }
 }
@@ -127,6 +168,8 @@ else if (cmd == "cerca")
     SearchContact(toSearch);
 else if (cmd == "nuovo")
     await AddContact(args.ToList());
+else if (cmd == "cancella")
+    await RemoveContact(toRemove);
 
 #endregion
 
@@ -134,9 +177,9 @@ else if (cmd == "nuovo")
 
 class ContactModel
 {
-    public string Nome { get; set; }
-    public string Cognome { get; set; }
-    public string Numero { get; set; }
+    public string? Nome { get; set; }
+    public string? Cognome { get; set; }
+    public string? Numero { get; set; }
 }
 
 #endregion
