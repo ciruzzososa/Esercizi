@@ -22,7 +22,15 @@ void PrintContact(string contact)
 
 string firstContact = contacts.First();
 
-PrintContact(firstContact);
+// PrintContact(firstContact);
+
+#endregion
+
+#region Esercizio 2
+
+void PrintAllContacts() =>
+    contacts.ForEach(contact =>
+        PrintContact(contact));
 
 #endregion
 
